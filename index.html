@@ -6,6 +6,38 @@
     <title>Rudmila's Pomodoro Timer</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        .track {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #f0f0f0 0%, #8ab951 100%);
+            margin-top: 2rem;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .zebra {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            bottom: 10px;
+            left: 0;
+            background: url('https://raw.githubusercontent.com/milar55/pomodorproject/main/zebra.png') no-repeat;
+            background-size: contain;
+            transition: left 0.5s linear;
+            animation: gallop 0.5s infinite;
+        }
+
+        @keyframes gallop {
+            0%, 100% { 
+                transform: translateY(0px); 
+            }
+            50% { 
+                transform: translateY(-5px); 
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -22,6 +54,9 @@
             <button onclick="pauseTimer()">Pause</button>
             <button onclick="resetTimer()">Reset</button>
         </div>
+        <div class="track">
+            <div class="zebra" id="zebra"></div>
+        </div>
     </div>
 
     <script>
@@ -29,12 +64,18 @@
         let timerId = null;
         let isRunning = false;
         let isWorkMode = true;  // Add this with other variables at the top
+        let totalTime = 25 * 60; // Add this with other variables at the top
 
         function updateDisplay() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             document.getElementById('timer').textContent = 
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update zebra position
+            const progress = (timeLeft / totalTime) * 100;
+            const zebra = document.getElementById('zebra');
+            zebra.style.left = `${100 - progress}%`;
         }
 
         function startTimer() {
@@ -62,6 +103,7 @@
             clearInterval(timerId);
             isRunning = false;
             timeLeft = 25 * 60;
+            totalTime = 25 * 60; // Update totalTime when resetting
             updateDisplay();
         }
 
@@ -69,6 +111,7 @@
             clearInterval(timerId);
             isRunning = false;
             timeLeft = minutes * 60;
+            totalTime = minutes * 60; // Update totalTime when setting new time
             updateDisplay();
         }
 
@@ -76,12 +119,14 @@
             clearInterval(timerId);
             isRunning = false;
             
-            isWorkMode = !isWorkMode;  // Switch between modes
+            isWorkMode = !isWorkMode;
             if (isWorkMode) {
-                timeLeft = 30 * 60;  // 30 minutes
+                timeLeft = 30 * 60;
+                totalTime = 30 * 60;
                 document.querySelector('.toggle button').textContent = 'Switch to Rest Mode';
             } else {
-                timeLeft = 5 * 60;   // 5 minutes
+                timeLeft = 5 * 60;
+                totalTime = 5 * 60;
                 document.querySelector('.toggle button').textContent = 'Switch to Work Mode';
             }
             updateDisplay();
