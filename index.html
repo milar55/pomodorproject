@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rudmila's Pomodoro Timer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Roboto+Mono:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Rudmila's Pomodoro Timer</h1>
+        <div class="timer" id="timer">25:00</div>
+        <div class="mode">
+            <button onclick="setTime(25)">Pomodoro</button>
+        </div>
+        <div class="toggle">
+            <button onclick="toggleMode()">Switch to Rest Mode</button>
+        </div>
+        <div class="controls">
+            <button onclick="startTimer()">Start</button>
+            <button onclick="pauseTimer()">Pause</button>
+            <button onclick="resetTimer()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let timerId = null;
+        let isRunning = false;
+        let isWorkMode = true;  // Add this with other variables at the top
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+                    
+                    if (timeLeft === 0) {
+                        clearInterval(timerId);
+                        isRunning = false;
+                        alert('Time is up!');
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            updateDisplay();
+        }
+
+        function setTime(minutes) {
+            clearInterval(timerId);
+            isRunning = false;
+            timeLeft = minutes * 60;
+            updateDisplay();
+        }
+
+        function toggleMode() {
+            clearInterval(timerId);
+            isRunning = false;
+            
+            isWorkMode = !isWorkMode;  // Switch between modes
+            if (isWorkMode) {
+                timeLeft = 30 * 60;  // 30 minutes
+                document.querySelector('.toggle button').textContent = 'Switch to Rest Mode';
+            } else {
+                timeLeft = 5 * 60;   // 5 minutes
+                document.querySelector('.toggle button').textContent = 'Switch to Work Mode';
+            }
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>    
